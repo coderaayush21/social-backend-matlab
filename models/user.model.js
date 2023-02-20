@@ -22,7 +22,7 @@ const userSchema = mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'User'
     }
-});
+}); 
 
 /* 
 *Checks if the user is aleardy registerd or not  
@@ -61,8 +61,8 @@ userSchema.methods.isFriendOf = function (user) {
 //         this.password = await bcrypt.hash(this.password, 9);
 //     }
 // });  
-
 /* 
+
 *Hash Password every time  
 */
 userSchema.pre('save', function () {
