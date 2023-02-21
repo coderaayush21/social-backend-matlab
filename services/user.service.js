@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Friend } = require('../models');
 
 const httpStatus = require('http-status');
 
@@ -33,28 +33,6 @@ async function loginUserService(requestBody) {
     return JwtService.getJwtToken(user);
 }
 
-async function sendFriendRequestService(params) {
-    const fromUser = await User.findById(params.fromid);
-    const toUser = await User.findById(params.toid);
-
-    //If user already a friend 
-    if (fromUser.isFriendOf(toUser)) {
-        throw new CustomError(httpStatus.CONFLICT, 'You are already in the friend list');
-    }
-
-    //If user tries to send request to himself
-    if (params.fromid === params.toid) {
-        throw new CustomError(httpStatus.BAD_REQUEST, 'you cannot send request to yourself');
-        //If user tries to spam requests on another user
-    } else if (toUser.requestAlreadyExists(fromUser)) {
-        throw new CustomError(httpStatus.CONFLICT, 'Request already pending');
-    }
-    //Create a new request
-    toUser.request.push(fromUser.id);
-    return await toUser.save();
-}
-
-
 async function viewFriendRequestsService(req) {
     //If user tries to view requests of some other user
     if (!(req._id === req.params.id)) {
@@ -65,8 +43,8 @@ async function viewFriendRequestsService(req) {
     return response;
 }
 
-async function acceptFriendRequestService(req) { 
-    
+async function acceptFriendRequestService(req) {
+
     const userWhoAccepts = await User.findById(req._id);
     const userWhoSends = await User.findById(req.params.id);
     const found = userWhoAccepts.request.find((e) =>
@@ -120,7 +98,6 @@ async function viewAllfriendsService(req) {
 module.exports = {
     registerUserService,
     loginUserService,
-    sendFriendRequestService,
     viewFriendRequestsService,
     acceptFriendRequestService,
     rejectFriendRequestService,

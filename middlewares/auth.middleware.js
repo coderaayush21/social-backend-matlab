@@ -1,6 +1,6 @@
 /* 
 *Authorization Middleware -: 
-*/ 
+*/
 
 const httpStatus = require('http-status');
 const CustomError = require('../utils/CustomError');
@@ -15,13 +15,13 @@ module.exports = function (req, res, next) {
 
     try {
         //!SESSION LOGIC
-        const res = JwtService.verifyJwtToken(token);
-        req._id = res._id;
-        req.loggedIn = true;
+        const user = JwtService.verifyJwtToken(token);
+        delete user.password;
+        req.user = user;
         next();
     } catch (error) {
         console.log(error, "verification failed");
         return next(CustomError(httpStatus.UNAUTHORIZED, 'Please Login First'));
     }
-}  
+}
 

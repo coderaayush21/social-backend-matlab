@@ -9,7 +9,7 @@ module.exports = (schema) => (req, res, next) => {
     // console.log("===============================", schema);
     const { error } = schema.validate(req.body);
     if (error) {
-        return next(CustomError(httpStatus.BAD_REQUEST, error.message));
+        return next(new CustomError(httpStatus.BAD_REQUEST, error.message));
     }
     next();
 }
