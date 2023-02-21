@@ -19,7 +19,27 @@ const acceptFriendRequestController = async (req, res, next) => {
     }
 }
 
+const rejectFriendRequestController = async (req, res, next) => {
+    try {
+        const response = await friendService.rejectFriendRequest(req);
+        return res.status(httpStatus.OK).json(response);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const viewFriendsController = async (req, res, next) => {
+    try {
+        const response = await friendService.viewFriends(req);
+        return res.status(httpStatus.OK).json(response);
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     sendFriendRequestController,
     acceptFriendRequestController,
+    rejectFriendRequestController,
+    viewFriendsController,
 }

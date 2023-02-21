@@ -11,9 +11,25 @@ const friendSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['accepted', 'pending']
+        enum: ['accepted', 'pending', 'rejected']
     }
 });
+
+friendSchema.statics.getRelation = async function (user, friend) {
+    console.log(this)
+    return await this.findOne({ $or: [{ $and: [{ user: user }, { friend: friend }] }, { $and: [{ user: friend }, { friend: user }] }] });
+}
+
+friendSchema.methods.updateRelation = async function (status) {
+    this.status = status;
+    return await this.save();
+
+}
+
+friendSchema.statics.viewFriends = async function (userId) {
+    console.log(this);
+    return await this.find({ friend: userId }).populate({ path: 'user', select: { password: 1 } }).select({ user: 1 });
+}
 
 const Friend = mongoose.model('Friend', friendSchema);
 
