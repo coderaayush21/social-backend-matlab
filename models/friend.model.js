@@ -27,8 +27,7 @@ friendSchema.methods.updateRelation = async function (status) {
 }
 
 friendSchema.statics.viewFriends = async function (userId) {
-    console.log(this);
-    return await this.find({ friend: userId }).populate({ path: 'user', select: { password: 1 } }).select({ user: 1 });
+    return await this.find({ friend: userId }).populate({ path: 'user', select: { email: 1 } }).select({ user: 1 });
 }
 
 const Friend = mongoose.model('Friend', friendSchema);
