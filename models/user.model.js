@@ -30,7 +30,7 @@ userSchema.statics.isEmailAlreadyRegistered = async function (email) {
 userSchema.methods.passwordMatch = function (password) {
     const res = bcrypt.compareSync(password, this.password);
     return !!res; // Convert to boolean value 
-} 
+}
 
 userSchema.pre('save', function () {
     if (this.isModified('password')) {

@@ -5,7 +5,7 @@ const httpStatus = require('http-status');
 const CustomError = require('../utils/CustomError');
 
 const sendFriendRequest = async (req) => {
-    const userWhoSendsId = req.user._id;
+    const userWhoSendsId = req.user._id; 
     const userWhomHeSendsId = req.body.friend;
     let updatedRelation;
     if (userWhoSendsId === userWhomHeSendsId) {
@@ -16,7 +16,6 @@ const sendFriendRequest = async (req) => {
         throw new CustomError(httpStatus.NOT_FOUND, 'No such user found');
     }
     const relation = await Friend.getRelation(userWhoSendsId, userWhomHeSends);
-    console.log(relation);
     if (relation) {
         if (relation.status == 'accepted') {
             throw new CustomError(httpStatus.BAD_REQUEST, 'You are already friend');
@@ -33,7 +32,6 @@ const sendFriendRequest = async (req) => {
         });
         return { "message": "success", "relation": updatedRelation }
     }
-
 }
 
 const acceptFriendRequest = async (req) => {
@@ -69,14 +67,18 @@ const rejectFriendRequest = async (req) => {
 const viewFriends = async (req) => {
     const userWhoWantsToViewId = req.user._id;
     const userWhoGetsViewedId = req.body.friend;
-
     const relation = await Friend.getRelation(userWhoWantsToViewId, userWhoGetsViewedId);
-    if (!relation || relation.status === 'rejected' || relation.status === 'pending') {
-        throw new CustomError(httpStatus.UNAUTHORIZED, 'You are unauthorized to view this page');
-    } else {
-        const friends = await Friend.viewFriends(userWhoGetsViewedId);
+
+    const friends = await Friend.viewFriends(userWhoGetsViewedId);
+
+    if (!relation && userWhoGetsViewedId === userWhoWantsToViewId) {
         return friends;
     }
+    else if (!relation && relation.status === 'rejected' || relation.status === 'pending') {
+        throw new CustomError(httpStatus.UNAUTHORIZED, 'You are unauthorized to view this page');
+    }
+
+    return friends;
 }
 
 module.exports = {
